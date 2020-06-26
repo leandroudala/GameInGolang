@@ -35,7 +35,21 @@ func main() {
 		return
 	}
 	defer renderer.Destroy()
-	log.Println("starting window")
+
+	img, err := sdl.LoadBMP("assets/images/player.bmp")
+	if err != nil {
+		log.Println("loading player sprite:", err)
+		return
+	}
+	defer img.Free()
+
+	playerTex, err := renderer.CreateTextureFromSurface(img)
+	if err != nil {
+		log.Println("creating player texture:", err)
+		return
+	}
+	defer playerTex.Destroy()
+
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
@@ -45,6 +59,11 @@ func main() {
 		}
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
+
+		renderer.Copy(
+			playerTex, 
+			&sdl.Rect{X: 0, Y: 0, W: 105, H: 105}, 
+			&sdl.Rect{X: 0, Y: 0, W: 105, H: 105})
 
 		renderer.Present()
 	}
