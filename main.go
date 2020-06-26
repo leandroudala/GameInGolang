@@ -42,12 +42,23 @@ func main() {
 		return
 	}
 
-	// enemy
-	enemy, err := newBasicEnemy(renderer, screenWidth/2.0, screenHeight/2.0)
-	if err != nil {
-		log.Println("creating basic enemy:", err)
-		return
+	// enemies
+	var enemies []basicEnemy
+
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 3; j++ {
+			x := (float64(i) / 5) * screenWidth + (basicEnemySize / 2)
+			y := float64(j * basicEnemySize) + basicEnemySize / 2
+
+			enemy, err := newBasicEnemy(renderer, x, y)
+			if err != nil {
+				log.Println("creating basic enemy:", err)
+				return
+			}
+			enemies = append(enemies, enemy)
+		}
 	}
+
 
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
@@ -62,7 +73,9 @@ func main() {
 		plr.draw(renderer)
 		plr.update()
 
-		enemy.draw(renderer)
+		for _, enemy := range enemies {
+			enemy.draw(renderer)
+		}
 
 		renderer.Present()
 	}
