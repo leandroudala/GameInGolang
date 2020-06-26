@@ -42,6 +42,13 @@ func main() {
 		return
 	}
 
+	// enemy
+	enemy, err := newBasicEnemy(renderer, screenWidth/2.0, screenHeight/2.0)
+	if err != nil {
+		log.Println("creating basic enemy:", err)
+		return
+	}
+
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
@@ -53,6 +60,9 @@ func main() {
 		renderer.Clear()
 
 		plr.draw(renderer)
+		plr.update()
+
+		enemy.draw(renderer)
 
 		renderer.Present()
 	}
