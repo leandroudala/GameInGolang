@@ -1,34 +1,50 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 const (
-	screenWidth = 600
+	screenWidth  = 600
 	screenHeight = 800
 )
+
+func textureFromBMP(renderer *sdl.Renderer, filename string) *sdl.Texture {
+	img, err := sdl.LoadBMP(filename)
+	if err != nil {
+		panic(fmt.Errorf("loading %v: %v", filename, err))
+	}
+	defer img.Free()
+
+	tex, err := renderer.CreateTextureFromSurface(img)
+	if err != nil {
+		panic(fmt.Errorf("creating texture from %v: %v", filename, err))
+	}
+	return tex
+}
 
 func main() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		log.Println("Initializing SDL:", err)
 		return
 	}
-
+	// creating window
 	window, err := sdl.CreateWindow(
-		"Gaming in Go - Episode 2", 
-		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, 
+		"Gaming in Go - Episode 2",
+		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		screenWidth, screenHeight,
 		sdl.WINDOW_OPENGL)
-	
+
 	if err != nil {
 		log.Println("Initializing window:", err)
 		return
 	}
 	defer window.Destroy()
-	
+
+	// creating renderer
 	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		log.Println("Initializing window:", err)
@@ -36,30 +52,25 @@ func main() {
 	}
 	defer renderer.Destroy()
 
-	plr, err := newPlayer(renderer)
-	if err != nil {
-		log.Println("creating player:", err)
-		return
-	}
+	// creating player
+	plr := newPlayer(renderer)
 
 	// enemies
 	var enemies []basicEnemy
 
 	for i := 0; i < 5; i++ {
 		for j := 0; j < 3; j++ {
-			x := (float64(i) / 5) * screenWidth + (basicEnemySize / 2)
-			y := float64(j * basicEnemySize) + basicEnemySize / 2
+			x := (float64(i)/5)*screenWidth + (basicEnemySize / 2)
+			y := float64(j*basicEnemySize) + basicEnemySize/2
 
-			enemy, err := newBasicEnemy(renderer, x, y)
-			if err != nil {
-				log.Println("creating basic enemy:", err)
-				return
-			}
+			enemy := newBasicEnemy(renderer, x, y)
+
 			enemies = append(enemies, enemy)
 		}
 	}
 
-
+	initBulletPool(renderer)
+	// starting screen
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
@@ -75,6 +86,11 @@ func main() {
 
 		for _, enemy := range enemies {
 			enemy.draw(renderer)
+		}
+
+		for _, bul := range bulletPool {
+			bul.draw(renderer)
+			bul.update()
 		}
 
 		renderer.Present()
