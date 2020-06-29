@@ -42,14 +42,14 @@ func main() {
 	plr := newPlayer(renderer)
 
 	// enemies
-	var enemies []basicEnemy
+	var enemies []*element
 
 	for i := 0; i < 5; i++ {
 		for j := 0; j < 3; j++ {
 			x := (float64(i)/5)*screenWidth + (basicEnemySize / 2)
 			y := float64(j*basicEnemySize) + basicEnemySize/2
 
-			enemy := newBasicEnemy(renderer, x, y)
+			enemy := newBasicEnemy(renderer, vector{x: x, y: y})
 
 			enemies = append(enemies, enemy)
 		}
@@ -79,7 +79,7 @@ func main() {
 		}
 
 		for _, enemy := range enemies {
-			enemy.draw(renderer)
+			enemy.onDraw(renderer)
 		}
 
 		for _, bul := range bulletPool {
