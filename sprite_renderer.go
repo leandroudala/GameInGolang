@@ -22,6 +22,7 @@ func newSpriteRenderer(container *element, renderer *sdl.Renderer, filename stri
 
 	return &spriteRenderer{
 		container: container,
+		tex:       tex,
 		width:     float64(width),
 		height:    float64(height)}
 }
