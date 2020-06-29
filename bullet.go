@@ -11,59 +11,45 @@ const (
 	bulletSpeed = 1
 )
 
-type bullet struct {
-	tex   *sdl.Texture
-	x, y  float64
-	angle float64
+func newBullet(renderer *sdl.Renderer) *element {
+	bullet := &element{}
 
-	active bool
+	sr := newSpriteRenderer(bullet, renderer, "assets/images/player_bullet.bmp")
+	bullet.addComponent(sr)
+
+	mover := newBulletMover(bullet, bulletSpeed)
+	bullet.addComponent(mover)
+
+	bullet.active = false
+
+	return bullet
 }
 
-func newBullet(renderer *sdl.Renderer) (b bullet) {
-	b.tex = textureFromBMP(renderer, "assets/images/player_bullet.bmp")
-
-	return b
-}
-
-func (b *bullet) draw(renderer *sdl.Renderer) {
-	if !b.active {
-		return
-	}
-
-	x := b.x - bulletSize/2
-	y := b.y - bulletSize/2
-
-	renderer.Copy(
-		b.tex,
-		&sdl.Rect{X: 0, Y: 0, W: bulletSize, H: bulletSize},
-		&sdl.Rect{X: int32(x), Y: int32(y), W: bulletSize, H: bulletSize})
-
-}
-
-var bulletPool []*bullet
+var bulletPool []*element
 
 func initBulletPool(renderer *sdl.Renderer) {
 	for i := 0; i < 30; i++ {
 		b := newBullet(renderer)
-		bulletPool = append(bulletPool, &b)
+		bulletPool = append(bulletPool, b)
+		elements = append(elements, b)
 	}
 }
 
-func (b *bullet) update() {
-	b.x += bulletSpeed * math.Cos(b.angle)
-	b.y += bulletSpeed * math.Sin(b.angle)
-
-	if b.x > screenWidth || b.x < 0 || b.y > screenHeight || b.y < 0 {
-		b.active = false
-	}
-}
-
-func bulletFromPool() (*bullet, bool) {
+func bulletFromPool() (*element, bool) {
 	for _, b := range bulletPool {
 		if !b.active {
 			return b, true
 		}
 	}
-
 	return nil, false
+}
+
+func (bullet *element) move() {
+	pos := &bullet.position
+	pos.x += bulletSpeed * math.Cos(bullet.rotation)
+	pos.y += bulletSpeed * math.Sin(bullet.rotation)
+
+	if pos.x > screenWidth || pos.x < 0 || pos.y > screenHeight || pos.y < 0 {
+		bullet.active = false
+	}
 }

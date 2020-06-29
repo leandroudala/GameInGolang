@@ -40,9 +40,7 @@ func main() {
 
 	// creating player
 	plr := newPlayer(renderer)
-
-	// enemies
-	var enemies []*element
+	elements = append(elements, plr)
 
 	for i := 0; i < 5; i++ {
 		for j := 0; j < 3; j++ {
@@ -51,7 +49,7 @@ func main() {
 
 			enemy := newBasicEnemy(renderer, vector{x: x, y: y})
 
-			enemies = append(enemies, enemy)
+			elements = append(elements, enemy)
 		}
 	}
 
@@ -67,25 +65,35 @@ func main() {
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
 
-		err = plr.onDraw(renderer)
-		if err != nil {
-			fmt.Println("drawing player:", err)
-			return
-		}
-		err = plr.onUpdate()
-		if err != nil {
-			fmt.Println("updating player:", err)
-			return
+		for _, elem := range elements {
+			if elem.active {
+				err = elem.onUpdate()
+				if err != nil {
+					fmt.Println("updating player:", err)
+					return
+				}
+				err = elem.onDraw(renderer)
+				if err != nil {
+					fmt.Println("drawing player:", err)
+					return
+				}
+			}
 		}
 
-		for _, enemy := range enemies {
-			enemy.onDraw(renderer)
-		}
-
-		for _, bul := range bulletPool {
-			bul.draw(renderer)
-			bul.update()
-		}
+		// for _, bullet := range bulletPool {
+		// 	if bullet.active {
+		// 		err = bullet.onUpdate()
+		// 		if err != nil {
+		// 			fmt.Println("updating bullet:", err)
+		// 			return
+		// 		}
+		// 		err = bullet.onDraw(renderer)
+		// 		if err != nil {
+		// 			fmt.Println("drawing bullet:", err)
+		// 			return
+		// 		}
+		// 	}
+		// }
 
 		renderer.Present()
 	}

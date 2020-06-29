@@ -67,3 +67,5 @@ func (elem *element) onUpdate() error {
 	}
 	return nil
 }
+
+var elements []*element
