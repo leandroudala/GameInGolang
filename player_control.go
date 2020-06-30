@@ -29,12 +29,12 @@ func (mover *keyboardMover) onUpdate() error {
 	if keys[sdl.SCANCODE_LEFT] == 1 {
 		// move player to left
 		if pos.x-(mover.sr.width/2.0) > 0 {
-			pos.x -= mover.speed
+			pos.x -= mover.speed * delta
 		}
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
 		// move player to left
 		if pos.x+(mover.sr.width/2.0) < screenWidth {
-			pos.x += mover.speed
+			pos.x += mover.speed * delta
 		}
 	}
 

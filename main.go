@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -10,6 +11,8 @@ import (
 const (
 	screenWidth  = 600
 	screenHeight = 800
+
+	targetTicksPerSecond = 60
 )
 
 var delta float64
@@ -58,6 +61,8 @@ func main() {
 	initBulletPool(renderer)
 	// starting screen
 	for {
+		frameStartTime := time.Now()
+
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
 			case *sdl.QuitEvent:
@@ -88,6 +93,8 @@ func main() {
 		}
 
 		renderer.Present()
+
+		delta = time.Since(frameStartTime).Seconds() * targetTicksPerSecond
 	}
 
 }
