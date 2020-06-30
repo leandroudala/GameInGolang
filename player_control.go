@@ -84,3 +84,11 @@ func (mover *keyboardShooter) shoot(x, y float64) {
 		bul.rotation = 270 * (math.Pi / 180)
 	}
 }
+
+func (mover *keyboardMover) onCollision(other *element) error {
+	return nil
+}
+
+func (mover *keyboardShooter) onCollision(other *element) error {
+	return nil
+}

@@ -60,3 +60,7 @@ func textureFromBMP(renderer *sdl.Renderer, filename string) *sdl.Texture {
 	}
 	return tex
 }
+
+func (sr *spriteRenderer) onCollision(other *element) error {
+	return nil
+}

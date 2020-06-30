@@ -12,6 +12,8 @@ const (
 	screenHeight = 800
 )
 
+var delta float64
+
 func main() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		log.Println("Initializing SDL:", err)
@@ -80,20 +82,10 @@ func main() {
 			}
 		}
 
-		// for _, bullet := range bulletPool {
-		// 	if bullet.active {
-		// 		err = bullet.onUpdate()
-		// 		if err != nil {
-		// 			fmt.Println("updating bullet:", err)
-		// 			return
-		// 		}
-		// 		err = bullet.onDraw(renderer)
-		// 		if err != nil {
-		// 			fmt.Println("drawing bullet:", err)
-		// 			return
-		// 		}
-		// 	}
-		// }
+		if err = checkCollisions(); err != nil {
+			fmt.Println("checking collisions:", err)
+			return
+		}
 
 		renderer.Present()
 	}

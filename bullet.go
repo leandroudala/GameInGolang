@@ -22,6 +22,14 @@ func newBullet(renderer *sdl.Renderer) *element {
 
 	bullet.active = false
 
+	bullet.tag = "bullet"
+
+	col := circle{
+		center: bullet.position,
+		radius: 4,
+	}
+	bullet.collisions = append(bullet.collisions, col)
+
 	return bullet
 }
 
